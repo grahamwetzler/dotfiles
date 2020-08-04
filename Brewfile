@@ -1,0 +1,46 @@
+brew "curl"
+brew "ffmpeg"
+brew "fish"
+brew "gcc"
+brew "git"
+brew "iperf3"
+brew "mitmproxy"
+brew "node"
+brew "pipx"
+brew "pyenv"
+brew "starship"
+brew "tmux"
+brew "wget"
+brew "youtube-dl"
+
+cask_args appdir: "~/Applications"
+cask "1password"
+cask "discord"
+cask "docker"
+cask "firefox"
+cask "font-fira-code"
+cask "google-chrome"
+cask "homebrew/cask-fonts/font-fira-code-nerd-font"
+cask "iterm2"
+cask "launchbar"
+cask "pdf-expert"
+cask "qmk-toolbox"
+cask "quicklook-csv"
+cask "quicklook-json"
+cask "resilio-sync"
+cask "via"
+cask "visual-studio-code"
+cask "wch-ch34x-usb-serial-driver"
+
+mas "Bear", id: 1091189122
+mas "Brother iPrint&Scan", id: 1193539993
+mas "Magnet", id: 441258766
+mas "The Unarchiver", id: 425424353
+mas "WireGuard", id: 1451685025
+
+tap "caskformula/caskformula"
+tap "homebrew/bundle"
+tap "homebrew/cask-drivers"
+tap "homebrew/cask"
+tap "homebrew/core"
+tap "mengbo/ch340g-ch34g-ch34x-mac-os-x-driver", "https://github.com/mengbo/ch340g-ch34g-ch34x-mac-os-x-driver"

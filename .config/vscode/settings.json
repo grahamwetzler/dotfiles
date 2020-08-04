@@ -1,0 +1,64 @@
+{
+  "workbench.colorTheme": "Dracula",
+  "window.zoomLevel": 0,
+  "editor.fontSize": 15,
+  "python.languageServer": "Pylance",
+  "workbench.startupEditor": "newUntitledFile",
+  "editor.formatOnSave": true,
+  "code-runner.clearPreviousOutput": true,
+  "code-runner.showExecutionMessage": false,
+  "code-runner.ignoreSelection": true,
+  "code-runner.saveFileBeforeRun": true,
+  "editor.fontFamily": "'Fira Code'",
+  "editor.fontLigatures": true,
+  "editor.minimap.enabled": false,
+  "editor.rulers": [80, 120],
+  "editor.multiCursorModifier": "ctrlCmd",
+  "explorer.confirmDragAndDrop": false,
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorSmoothCaretAnimation": true,
+  "terminal.integrated.cursorBlinking": true,
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "python.dataScience.askForKernelRestart": false,
+  "python.formatting.provider": "black",
+  "terminal.integrated.copyOnSelection": true,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.tox": true,
+    "**/.eggs": true,
+    "**/build": true,
+    "**/dist": true,
+    "*.egg-info": true
+  },
+  "git.confirmSync": false,
+  "python.linting.flake8Enabled": true,
+  "python.pythonPath": "~/.pyenv/shims/python",
+  "git.autofetch": true,
+  "git.enableSmartCommit": true,
+  "diffEditor.renderSideBySide": false,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "window.openFilesInNewWindow": "on",
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "explorer.confirmDelete": false,
+  "remote.SSH.showLoginTerminal": true,
+  "remote.SSH.useLocalServer": false,
+  "remote.SSH.remotePlatform": {
+    "docker": "linux"
+  },
+  "python.linting.flake8Path": "/Users/graham/.pyenv/shims/flake8",
+  "python.formatting.blackPath": "/Users/graham/.local/bin/black",
+  "editor.tabCompletion": "on",
+  "editor.acceptSuggestionOnEnter": "off",
+  "spellright.language": [
+    "en"
+  ],
+  "spellright.documentTypes": [
+    "markdown",
+    "latex"
+  ]
+}
