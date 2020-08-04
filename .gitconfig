@@ -1,0 +1,9 @@
+[user]
+	name = Graham Wetzler
+	email = graham@wetzler.dev
+[core]
+	excludesfile = /Users/graham/.gitignore_global
+[credential]
+	helper = osxkeychain
+[init]
+	defaultBranch = main
