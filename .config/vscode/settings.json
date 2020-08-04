@@ -50,8 +50,8 @@
   "remote.SSH.remotePlatform": {
     "docker": "linux"
   },
-  "python.linting.flake8Path": "/Users/graham/.pyenv/shims/flake8",
-  "python.formatting.blackPath": "/Users/graham/.local/bin/black",
+  "python.linting.flake8Path": "~/.pyenv/shims/flake8",
+  "python.formatting.blackPath": "~/.local/bin/black",
   "editor.tabCompletion": "on",
   "editor.acceptSuggestionOnEnter": "off",
   "spellright.language": [
