@@ -8,8 +8,8 @@
 [init]
 	defaultBranch = main
 [alias]
-	s = status
-	c = commit
+	s = status -s
+	c = commit -m
 	unstage = reset HEAD --
 	a = add
 	tree = log --graph --oneline --all
