@@ -12,3 +12,4 @@
 	c = commit
 	unstage = reset HEAD --
 	a = add
+	tree = log --graph --oneline --all
