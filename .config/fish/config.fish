@@ -9,12 +9,5 @@ alias config "git --git-dir=$HOME/.config/dotfiles/ --work-tree=$HOME"
 alias gs "git status"
 alias gl "git log"
 
-function venv
-    # Function to quickly create a venv, activate, and update pip.
-    python -m venv venv
-    source ./venv/bin/activate.fish
-    pip install --upgrade --quiet pip
-end
-
 starship init fish | source
 pyenv init - | source
