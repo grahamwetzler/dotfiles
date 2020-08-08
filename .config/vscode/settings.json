@@ -54,11 +54,6 @@
   "python.formatting.blackPath": "~/.local/bin/black",
   "editor.tabCompletion": "on",
   "editor.acceptSuggestionOnEnter": "off",
-  "spellright.language": [
-    "en"
-  ],
-  "spellright.documentTypes": [
-    "markdown",
-    "latex"
-  ]
+  "spellright.language": ["en"],
+  "cSpell.userWords": ["Embry", "Wetzler", "grahamwetzler", "linkedin"]
 }
