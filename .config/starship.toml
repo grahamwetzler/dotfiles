@@ -1,8 +1,13 @@
 # ~/.config/starship.toml
 
 # Don't print a new line at the start of the prompt
-add_newline = false
+add_newline = true
 
 # Replace the "❯" symbol in the prompt with "➜"
 [character]      # The name of the module we are configuring is "character"
-symbol = "➜"     # The "symbol" segment is being set to "➜"
+symbol = "❯❯❯"     # The "symbol" segment is being set to "➜"
+style_failure = "bold yellow"
+
+[directory]
+truncation_length = 8
+truncate_to_repo = false
