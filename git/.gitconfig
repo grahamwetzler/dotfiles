@@ -1,0 +1,15 @@
+[init]
+	defaultBranch = main
+[user]
+	name = Graham Wetzler
+	email = graham@wetzler.dev
+[alias]
+	s = status -sb
+	sw = switch
+	ll = log --oneline
+	last = log -1 HEAD --stat
+	rv = remote -v
+	gl = config --global -l
+	se = !git rev-list --all | xargs git grep -F
+	cm = commit -m
+	d = diff --name-only main...

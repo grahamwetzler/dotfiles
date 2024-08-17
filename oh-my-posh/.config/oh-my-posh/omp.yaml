@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
+version: 2
+final_space: true
+palette:
+  background: "#282a36"
+  current_line: "#44475a"
+  foreground: "#f8f8f2"
+  comment: "#6272a4"
+  cyan: "#8be9fd"
+  green: "#50fa7b"
+  orange: "#ffb86c"
+  pink: "#ff79c6"
+  purple: "#bd93f9"
+  red: "#ff5555"
+  yellow: "#f1fa8c"
+blocks:
+  - type: prompt
+    alignment: left
+    trailing_diamond: ""
+    leading_diamond: ""
+    segments:
+      - type: session
+        style: diamond
+        foreground: p:foreground
+        background: p:purple
+        template: >
+          {{ if .SSHSession }} {{ .UserName }}@{{ .HostName }}{{ end }}
+          {{ if ne .UserName "graham" }}{{ .UserName }}{{ end }}
+      - type: path
+        style: diamond
+        background: p:pink
+        foreground: p:background
+        template: "{{ .Path }}"
+        properties:
+          style: full
+      - type: python
+        style: powerline
+        fetch_virtual_env: true
+        display_mode: files
+        powerline_symbol: 
+        foreground: p:background
+        background: p:green
+        template: >
+            {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}
+      - type: status
+        style: diamond
+        background: p:red
+        foreground: p:background
+tooltips:
+  - type: git
+    tips:
+      - git
+      - g
+    style: diamond
+    foreground: "#193549"
+    background: "#fffb38"
+    leading_diamond: 
+    trailing_diamond: 
+    template: "{{ .HEAD }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end
+      }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if
+      .Working.Changed }}  {{ .Working.String }}{{ end }}"
+    properties:
+      fetch_status: true
+      fetch_upstream_icon: true
