@@ -63,6 +63,11 @@ alias m4b-tool='docker run -it --rm -u $(id -u):$(id -g) -v "$(pwd)":/mnt sandre
 export PATH="$PATH:/Users/graham/.local/bin"
 
 # shell integrations
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-eval "$(fzf --zsh)"
+if typeset -f pyenv > /dev/null; then
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+fi
+
+if type fzf > /dev/null; then
+  eval "$(fzf --zsh)"
+fi
