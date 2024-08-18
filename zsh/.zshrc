@@ -57,7 +57,6 @@ alias la='ls -lah'
 alias ll='ls -llh'
 alias dc="docker compose"
 alias dps="docker ps | less -S"
-alias m4b-tool='docker run -it --rm -u $(id -u):$(id -g) -v "$(pwd)":/mnt sandreas/m4b-tool:latest'
 
 # pipx
 export PATH="$PATH:/Users/graham/.local/bin"
