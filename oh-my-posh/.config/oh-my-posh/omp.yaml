@@ -19,37 +19,27 @@ blocks:
     alignment: left
     segments:
       - type: session
-        style: powerline
-        powerline_symbol: 
-        foreground: p:foreground
-        background: p:purple
+        style: plain
+        foreground: p:purple
         template: >
           {{ if .SSHSession }} {{ .UserName }}@{{ .HostName }}{{ end }}
           {{ if ne .UserName "graham" }}{{ .UserName }}{{ end }}
       - type: path
-        style: powerline
-        powerline_symbol: 
-        background: p:green
-        foreground: p:comment
+        style: plain
+        foreground: p:green
         template: "{{ .Path }}"
         properties:
           style: full
       - type: git
-        style: powerline
-        powerline_symbol: 
-        foreground: p:comment
-        background: p:orange
-        template: >
-          {{ .HEAD }}
+        style: plain
+        foreground: p:yellow
+        template: " {{ .HEAD }}"
       - type: python
-        style: powerline
-        powerline_symbol: 
+        style: plain
         fetch_virtual_env: true
         display_mode: files
-        foreground: p:background
-        background: p:green
-        template: >
-            {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}
+        foreground: p:green
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}"
       # - type: status
       #   style: powerline
       #   powerline_symbol: 
@@ -64,12 +54,13 @@ blocks:
       #   template: >
       #     {{ if ne .Code 0 }}{{ .Code }}{{ else }} {{ end }}
       - type: shell
-        style: powerline
-        powerline_symbol: 
-        foreground: p:foreground
-        background: p:cyan
-        template: >
-          {{ if ne .Name "zsh"}}{{ .Name }}{{ end }}
+        style: plain
+        foreground: p:cyan
+        template: " {{ if ne .Name \"zsh\"}}{{ .Name }}{{ end }}"
+      - type: text
+        style: plain
+        foreground: p:comment
+        template: " ❯"
 tooltips:
   - type: git
     tips:

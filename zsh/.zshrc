@@ -61,6 +61,8 @@ alias dps="docker ps | less -S"
 # pipx
 export PATH="$PATH:/Users/graham/.local/bin"
 
+export BAT_THEME=Dracula
+
 # shell integrations
 if typeset -f pyenv > /dev/null; then
   eval "$(pyenv init -)"
