@@ -34,12 +34,6 @@ blocks:
         style: plain
         foreground: p:yellow
         template: " {{ .HEAD }}"
-      - type: python
-        style: plain
-        fetch_virtual_env: true
-        display_mode: files
-        foreground: p:green
-        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}"
       # - type: status
       #   style: powerline
       #   powerline_symbol: 
@@ -61,6 +55,16 @@ blocks:
         style: plain
         foreground: p:comment
         template: " ❯"
+  - type: rprompt
+    alignment: right
+    segments:
+      - type: python
+        style: plain
+        fetch_virtual_env: true
+        display_mode: files
+        foreground: p:green
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ end }}"
+
 tooltips:
   - type: git
     tips:
