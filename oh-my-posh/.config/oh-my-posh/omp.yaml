@@ -63,7 +63,7 @@ blocks:
         fetch_virtual_env: true
         display_mode: files
         foreground: p:green
-        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ end }}"
+        template: "{{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ end }}"
 
 tooltips:
   - type: git
