@@ -34,27 +34,14 @@ blocks:
         style: plain
         foreground: p:yellow
         template: " {{ .HEAD }}"
-      # - type: status
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: p:red
-      #   foreground: p:foreground
-      #   properties:
-      #     always_enabled: true
-      #     status_template: >
-      #       {{ if ne .Code 0 }}{{ .Code }}{{ else }}{{ end }}
-      #   # background_templates:
-      #   #   - "{{ if .Code ne 0 }}p:red{{ else }}p:green{{ end }}"
-      #   template: >
-      #     {{ if ne .Code 0 }}{{ .Code }}{{ else }} {{ end }}
       - type: shell
         style: plain
         foreground: p:cyan
-        template: " {{ if ne .Name \"zsh\"}}{{ .Name }}{{ end }}"
+        template: ' {{ if ne .Name "zsh"}}{{ .Name }}{{ end }}'
       - type: text
         style: plain
         foreground: p:comment
-        template: " ❯"
+        template: " ▸"
   - type: rprompt
     alignment: right
     segments:
