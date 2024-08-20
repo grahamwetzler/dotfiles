@@ -34,10 +34,14 @@ blocks:
         style: plain
         foreground: p:cyan
         template: ' {{ if ne .Name "zsh"}}{{ .Name }}{{ end }}'
-      - type: text
+      - type: status
         style: plain
-        foreground: p:current_line
-        template: " ▸"
+        foreground: p:green
+        foreground_templates:
+          - "{{ if gt .Code 0 }}p:red{{ end }}"
+        properties:
+          always_enabled: true
+        template: " \u276f"
   - type: rprompt
     alignment: right
     segments:
@@ -50,6 +54,7 @@ blocks:
         properties:
           fetch_status: true
           fetch_upstream_icon: true
+          branch_max_length: 25
       - type: python
         style: plain
         fetch_virtual_env: true
