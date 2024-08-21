@@ -72,3 +72,7 @@ fi
 if type fzf > /dev/null; then
   eval "$(fzf --zsh)"
 fi
+
+if [[ -f "$HOME/.env" ]] then
+  source "$HOME/.env"
+fi
