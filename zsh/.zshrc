@@ -73,6 +73,10 @@ if type fzf > /dev/null; then
   eval "$(fzf --zsh)"
 fi
 
+export FZF_DBT_PREVIEW_CMD="bat --color=always --style=numbers {}"
+export FZF_DBT_HEIGHT=80%
+source $HOME/.fzf-dbt.zsh
+
 if [[ -f "$HOME/.env" ]] then
   source "$HOME/.env"
 fi
