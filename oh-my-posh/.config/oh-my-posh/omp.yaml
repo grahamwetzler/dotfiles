@@ -38,6 +38,7 @@ blocks:
         style: plain
         foreground: p:green
         foreground_templates:
+          - "{{ if eq .Code 130 }}p:comment{{ end }}"
           - "{{ if gt .Code 0 }}p:red{{ end }}"
         properties:
           always_enabled: true
