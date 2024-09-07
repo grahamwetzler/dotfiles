@@ -12,7 +12,7 @@ config.window_decorations = "RESIZE"
 config.window_background_opacity = 0.80
 config.macos_window_background_blur = 10
 
-config.enable_tab_bar = false
+config.enable_tab_bar = true
 
 config.keys = {
   {

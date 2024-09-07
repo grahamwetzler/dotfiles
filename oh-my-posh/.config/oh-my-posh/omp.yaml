@@ -42,7 +42,7 @@ blocks:
           - "{{ if gt .Code 0 }}p:red{{ end }}"
         properties:
           always_enabled: true
-        template: " \u276f"
+        template: " \uf120 "
   - type: rprompt
     alignment: right
     segments:
@@ -56,6 +56,8 @@ blocks:
           fetch_status: true
           fetch_upstream_icon: true
           branch_max_length: 25
+          ignore_submodules:
+            "*": all
       - type: python
         style: plain
         fetch_virtual_env: true
