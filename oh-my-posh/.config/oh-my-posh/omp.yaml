@@ -1,13 +1,11 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
 
-version: 2
-final_space: true
 palette:
   background: "#282a36"
-  current_line: "#44475a"
-  foreground: "#f8f8f2"
   comment: "#6272a4"
+  current_line: "#44475a"
   cyan: "#8be9fd"
+  foreground: "#f8f8f2"
   green: "#50fa7b"
   orange: "#ffb86c"
   pink: "#ff79c6"
@@ -15,52 +13,57 @@ palette:
   red: "#ff5555"
   yellow: "#f1fa8c"
 blocks:
-  - type: prompt
-    alignment: left
-    segments:
-      - type: session
-        style: plain
-        foreground: p:purple
-        template: >
-          {{ if .SSHSession }} {{ .UserName }}@{{ .HostName }}{{ end }}
-          {{ if ne .UserName "graham" }}{{ .UserName }}{{ end }}
-      - type: path
-        style: plain
-        foreground: p:pink
-        template: "{{ .Path }}"
-        properties:
-          style: full
-      - type: shell
-        style: plain
-        foreground: p:cyan
-        template: ' {{ if ne .Name "zsh"}}{{ .Name }}{{ end }}'
-      - type: status
-        style: plain
-        foreground: p:green
-        foreground_templates:
-          - "{{ if eq .Code 130 }}p:comment{{ end }}"
-          - "{{ if gt .Code 0 }}p:red{{ end }}"
-        properties:
-          always_enabled: true
-        template: " \uf120 "
-  - type: rprompt
-    alignment: right
-    segments:
-      - type: git
-        style: plain
-        foreground: p:purple
-        template: " {{ .HEAD }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end
-          }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if
-          .Working.Changed }}  {{ .Working.String }}{{ end }} "
-        properties:
-          fetch_status: true
-          fetch_upstream_icon: true
-          branch_max_length: 25
-          ignore_submodules:
-            "*": all
-      - type: python
-        style: plain
-        fetch_virtual_env: true
-        display_mode: files
-        foreground: p:green
-        template: " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ end }} "
+- type: prompt
+  alignment: left
+  segments:
+  - properties:
+      cache_duration: none
+    template: "{{ if .SSHSession }}\ueba9 {{ .UserName }}@{{ .HostName }}{{ end }} {{ if ne .UserName \"graham\" }}{{ .UserName }}{{ end }}"
+    foreground: p:purple
+    type: session
+    style: plain
+  - properties:
+      cache_duration: none
+      style: full
+    template: "{{ .Path }}"
+    foreground: p:pink
+    type: path
+    style: plain
+  - properties:
+      cache_duration: none
+    template: " {{ if ne .Name \"zsh\"}}{{ .Name }}{{ end }}"
+    foreground: p:cyan
+    type: shell
+    style: plain
+  - properties:
+      always_enabled: true
+      cache_duration: none
+    template: " \uf120 "
+    foreground: p:green
+    type: status
+    style: plain
+    foreground_templates:
+    - "{{ if eq .Code 130 }}p:comment{{ end }}"
+    - "{{ if gt .Code 0 }}p:red{{ end }}"
+- type: rprompt
+  alignment: right
+  segments:
+  - properties:
+      branch_max_length: 25
+      cache_duration: none
+      fetch_status: true
+      fetch_upstream_icon: true
+      ignore_submodules:
+        "*": all
+    template: " {{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }} "
+    foreground: p:purple
+    type: git
+    style: plain
+  - properties:
+      cache_duration: none
+    template: " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ end }} "
+    foreground: p:green
+    type: python
+    style: plain
+version: 3
+final_space: true
