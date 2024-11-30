@@ -56,7 +56,11 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 export CLICOLOR=1
 
-alias cat='bat'
+if command -v bat 2>&1 >/dev/null
+then
+  alias cat='bat'
+fi
+
 alias la='ls -lah'
 alias ll='ls -llh'
 alias dc="docker compose"
