@@ -2,6 +2,10 @@ if [[ -f "/opt/homebrew/bin/brew" ]] then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+if [[ -f "$HOME/.env" ]] then
+  source "$HOME/.env"
+fi
+
 # zinit
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
@@ -78,8 +82,4 @@ export FZF_DBT_HEIGHT=80%
 
 if [[ -f "$HOME/.fzf-dbt.zsh" ]] then
   source $HOME/.fzf-dbt.zsh
-fi
-
-if [[ -f "$HOME/.env" ]] then
-  source "$HOME/.env"
 fi
