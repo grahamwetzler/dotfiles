@@ -87,3 +87,8 @@ export FZF_DBT_HEIGHT=80%
 if [[ -f "$HOME/.fzf-dbt.zsh" ]] then
   source $HOME/.fzf-dbt.zsh
 fi
+
+if command -v direnv 2>&1 >/dev/null
+then
+  eval "$(direnv hook zsh)"
+fi

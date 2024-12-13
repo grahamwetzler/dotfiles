@@ -13,3 +13,5 @@
 	se = !git rev-list --all | xargs git grep -F
 	cm = commit -m
 	d = diff --name-only main...
+[core]
+	excludesFile = ~/.gitignore
