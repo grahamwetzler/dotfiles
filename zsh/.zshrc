@@ -96,3 +96,7 @@ fi
 . "$HOME/.cargo/env"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+ntfy() {
+  curl -d "$1" "$NTFY_URL"
+}
