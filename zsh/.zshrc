@@ -92,3 +92,7 @@ if command -v direnv 2>&1 >/dev/null
 then
   eval "$(direnv hook zsh)"
 fi
+
+. "$HOME/.cargo/env"
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
