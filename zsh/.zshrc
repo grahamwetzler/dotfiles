@@ -65,6 +65,7 @@ alias la='ls -lah'
 alias ll='ls -llh'
 alias dc="docker compose"
 alias dps="docker ps | less -S"
+alias hl="rg --passthru"
 
 # pipx
 export PATH="$PATH:/Users/graham/.local/bin"
