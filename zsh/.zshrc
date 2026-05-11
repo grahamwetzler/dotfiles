@@ -1,3 +1,10 @@
+# OPENSPEC:START
+# OpenSpec shell completions configuration
+fpath=("/Users/graham/.zsh/completions" $fpath)
+autoload -Uz compinit
+compinit
+# OPENSPEC:END
+
 if [[ -f "/opt/homebrew/bin/brew" ]] then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
@@ -19,6 +26,7 @@ fi
 
 
 # Load completions
+fpath+=~/.zsh/completions
 autoload -Uz compinit && compinit
 
 # History
@@ -65,7 +73,17 @@ alias la='ls -lah'
 alias ll='ls -llh'
 alias dc="docker compose"
 alias dps="docker ps | less -S"
-alias hl="rg --passthru"
+alias hl="rg --passthru" # highlight
+alias lm="git show --pretty="format:" --name-only" # last commit
+# alias dbtb="dbt build -s $(git diff --name-only main... --diff-filter=d | grep .sql | xargs basename -s .sql | xargs) -x"
+
+# sfl() {
+#   sqlfluff lint $(git diff --name-only main... --diff-filter=d | grep .sql | xargs)
+# }
+
+# sff() {
+#   sqlfluff fix $(git diff --name-only main... --diff-filter=d | grep .sql | xargs)
+# }
 
 # pipx
 export PATH="$PATH:/Users/graham/.local/bin"
@@ -101,3 +119,51 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 ntfy() {
   curl -d "$1" "$NTFY_URL"
 }
+
+# dbt aliases
+alias dbtf=/Users/graham/.local/bin/dbt
+alias dbtp=/opt/homebrew/bin/dbt
+alias dbt="poetry run dbt"
+
+# dbt worktree setup function
+dbt_worktree() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: dbt_worktree BRANCH"
+    return 1
+  fi
+
+  local BRANCH="$1"
+  local WORKTREE_NAME="data-dbt-analytics__${BRANCH}"
+  local WORKTREE_PATH="$HOME/Developer/${WORKTREE_NAME}"
+  local BASE_PATH="$HOME/Developer/data-dbt-analytics_main"
+
+  # Try to fetch the branch if it doesn't exist locally
+  if ! git -C "$BASE_PATH" rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
+    echo "Branch $BRANCH not found locally, fetching from origin..."
+    if git -C "$BASE_PATH" fetch origin "$BRANCH"; then
+      git -C "$BASE_PATH" checkout -b "$BRANCH" "origin/$BRANCH" || return 1
+    else
+      echo "Failed to fetch from origin, creating new local branch..."
+      git -C "$BASE_PATH" checkout -b "$BRANCH" || return 1
+    fi
+  fi
+
+  # Create the worktree
+  git -C "$BASE_PATH" worktree add "$WORKTREE_PATH" "$BRANCH" || return 1
+
+  # cd into the project
+  cd "$WORKTREE_PATH" || return 1
+
+  # Run poetry sync
+  poetry sync
+
+  # Run poetry dbt deps
+  poetry run dbt deps
+
+  # Open in VS Code
+  code --add .
+}
+
+# Cortex CLI completion (disable via /settings in cortex)
+[[ -s ~/.zsh/completions/cortex.zsh ]] && source ~/.zsh/completions/cortex.zsh
+export NODE_EXTRA_CA_CERTS=/Users/Shared/.prompt_security/.certs/mitmproxy-ca.pem
