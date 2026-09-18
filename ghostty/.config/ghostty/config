@@ -1,0 +1,13 @@
+macos-icon = glass
+cursor-style = block
+cursor-style-blink = false
+shell-integration-features = no-cursor
+font-family = JetBrainsMapleMono-Regular.ttf
+font-size = 14
+
+theme = Catppuccin Mocha
+background-opacity = 0.92
+background-blur = 20
+
+window-padding-x = 10
+window-padding-y = 10
