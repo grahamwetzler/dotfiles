@@ -10,11 +10,11 @@
       {
         "id": "568a8136-8d5a-4447-808f-0006604e6e08",
         "type": "context-percentage",
+        "color": "brightGreen",
+        "rawValue": false,
         "metadata": {
           "display": "slider"
-        },
-        "rawValue": false,
-        "color": "brightGreen"
+        }
       },
       {
         "id": "5",
@@ -64,6 +64,8 @@
   "inheritSeparatorColors": true,
   "globalBold": false,
   "gitCacheTtlSeconds": 5,
+  "terminalWidthCacheTtlSeconds": 5,
+  "customCommandCacheTtlSeconds": 0,
   "minimalistMode": false,
   "powerline": {
     "enabled": false,
@@ -77,5 +79,9 @@
     "endCaps": [],
     "autoAlign": false,
     "continueThemeAcrossLines": false
+  },
+  "installation": {
+    "method": "pinned",
+    "installedVersion": "2.2.30"
   }
 }
