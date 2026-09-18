@@ -1,163 +1,70 @@
-if [[ -f "/opt/homebrew/bin/brew" ]] then
+# ─── Homebrew ────────────────────────────────────────────────────────────────
+if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-if [[ -f "$HOME/.env" ]] then
-  source "$HOME/.env"
+# ─── Environment ─────────────────────────────────────────────────────────────
+# Secrets and machine-local exports (untracked)
+[[ -f "$HOME/.env" ]] && source "$HOME/.env"
+
+typeset -U path PATH          # keep PATH entries unique
+path=("$HOME/.local/bin" $path)
+
+export CLICOLOR=1
+export BAT_THEME=Dracula
+
+# ─── Plugins (zinit) ─────────────────────────────────────────────────────────
+ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+if [[ ! -d "$ZINIT_HOME/.git" ]]; then
+  mkdir -p "$(dirname "$ZINIT_HOME")"
+  git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
+source "$ZINIT_HOME/zinit.zsh"
 
-# zinit
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-[ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
-[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-[[ -f "${ZINIT_HOME}/zinit.zsh" ]] && source "${ZINIT_HOME}/zinit.zsh"
-
-# oh-my-posh
-if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && command -v oh-my-posh >/dev/null 2>&1; then
-  eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/omp.yaml)"
-fi
-
-
-# Load completions
-[[ -d ~/.zsh/completions ]] && fpath+=~/.zsh/completions
-autoload -Uz compinit && compinit
-
-# History
-HISTSIZE=5000
-HISTFILE=~/.zsh_history
-SAVEHIST=$HISTSIZE
-HISTDUP=erase
-setopt appendhistory
-setopt sharehistory
-setopt hist_ignore_space
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_find_no_dups
-
-# Keybindings
-bindkey "^[[A" history-search-backward
-bindkey "^[[B" history-search-forward
-
-# Add in zsh plugins
-zinit light zsh-users/zsh-syntax-highlighting
+# Must be loaded before compinit so its completions land in fpath
 zinit light zsh-users/zsh-completions
-zinit light zsh-users/zsh-autosuggestions
-zinit light Aloxaf/fzf-tab
 
-# source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# ─── Completion ──────────────────────────────────────────────────────────────
+ZCOMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+mkdir -p "${ZCOMPDUMP:h}"
+autoload -Uz compinit && compinit -d "$ZCOMPDUMP"
+zinit cdreplay -q             # replay compdefs from plugins loaded above
 
-# Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'CLICOLOR_FORCE=1 ls -lah $realpath'
 
-# ls colors
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-export CLICOLOR=1
+# Plugins that bind widgets; syntax-highlighting must come last
+zinit light Aloxaf/fzf-tab
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-syntax-highlighting
 
-if command -v bat 2>&1 >/dev/null
-then
-  alias cat='bat'
-fi
+# ─── History ─────────────────────────────────────────────────────────────────
+HISTFILE=~/.zsh_history
+HISTSIZE=5000
+SAVEHIST=$HISTSIZE
+setopt share_history          # implies append; sync across live sessions
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_find_no_dups
+
+# ─── Aliases ─────────────────────────────────────────────────────────────────
+command -v bat >/dev/null && alias cat='bat'
 
 alias la='ls -lah'
 alias ll='ls -llh'
-alias dc="docker compose"
-alias dps="docker ps | less -S"
-alias hl="rg --passthru" # highlight
-alias lm="git show --pretty="format:" --name-only" # last commit
-# alias dbtb="dbt build -s $(git diff --name-only main... --diff-filter=d | grep .sql | xargs basename -s .sql | xargs) -x"
+alias hl='rg --passthru'                               # highlight matches
+alias lm='git show --pretty="format:" --name-only'     # files in last commit
 
-# sfl() {
-#   sqlfluff lint $(git diff --name-only main... --diff-filter=d | grep .sql | xargs)
-# }
-
-# sff() {
-#   sqlfluff fix $(git diff --name-only main... --diff-filter=d | grep .sql | xargs)
-# }
-
-# pipx
-export PATH="$PATH:/Users/graham/.local/bin"
-
-export BAT_THEME=Dracula
-
-# shell integrations
-if type fzf > /dev/null; then
-  eval "$(fzf --zsh)"
+# ─── Tool integrations ───────────────────────────────────────────────────────
+if [[ "$TERM_PROGRAM" != "Apple_Terminal" ]] && command -v oh-my-posh >/dev/null; then
+  eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/omp.yaml)"
 fi
 
-export FZF_DBT_PREVIEW_CMD="bat --color=always --style=numbers {}"
-export FZF_DBT_HEIGHT=80%
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
-if [[ -f "$HOME/.fzf-dbt.zsh" ]] then
-  source $HOME/.fzf-dbt.zsh
-fi
-
-if command -v direnv 2>&1 >/dev/null
-then
-  eval "$(direnv hook zsh)"
-fi
-
-test -e "${HOME}/.cargo/env" && source "${HOME}/.cargo/env"
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-ntfy() {
-  curl -d "$1" "$NTFY_URL"
-}
-
-# dbt aliases
-alias dbtf=/Users/graham/.local/bin/dbt
-alias dbtp=/opt/homebrew/bin/dbt
-alias dbt="poetry run dbt"
-
-# dbt worktree setup function
-dbt_worktree() {
-  if [[ -z "$1" ]]; then
-    echo "Usage: dbt_worktree BRANCH"
-    return 1
-  fi
-
-  local BRANCH="$1"
-  local WORKTREE_NAME="data-dbt-analytics__${BRANCH}"
-  local WORKTREE_PATH="$HOME/Developer/${WORKTREE_NAME}"
-  local BASE_PATH="$HOME/Developer/data-dbt-analytics_main"
-
-  # Try to fetch the branch if it doesn't exist locally
-  if ! git -C "$BASE_PATH" rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
-    echo "Branch $BRANCH not found locally, fetching from origin..."
-    if git -C "$BASE_PATH" fetch origin "$BRANCH"; then
-      git -C "$BASE_PATH" checkout -b "$BRANCH" "origin/$BRANCH" || return 1
-    else
-      echo "Failed to fetch from origin, creating new local branch..."
-      git -C "$BASE_PATH" checkout -b "$BRANCH" || return 1
-    fi
-  fi
-
-  # Create the worktree
-  git -C "$BASE_PATH" worktree add "$WORKTREE_PATH" "$BRANCH" || return 1
-
-  # cd into the project
-  cd "$WORKTREE_PATH" || return 1
-
-  # Run poetry sync
-  poetry sync
-
-  # Run poetry dbt deps
-  poetry run dbt deps
-
-  # Open in VS Code
-  code --add .
-}
-
-# Cortex CLI completion (disable via /settings in cortex)
-[[ -s ~/.zsh/completions/cortex.zsh ]] && source ~/.zsh/completions/cortex.zsh
-[[ -f /Users/Shared/.prompt_security/.certs/mitmproxy-ca.pem ]] && export NODE_EXTRA_CA_CERTS=/Users/Shared/.prompt_security/.certs/mitmproxy-ca.pem
-
-[[ -f "$HOME/.atuin/bin/env" ]] && . "$HOME/.atuin/bin/env"
-
-if command -v atuin >/dev/null 2>&1; then
-  eval "$(atuin init zsh)"
-fi
+# atuin last: it rebinds Up and Ctrl-R
+[[ -f "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
+command -v atuin >/dev/null && eval "$(atuin init zsh)"
