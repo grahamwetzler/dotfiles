@@ -68,3 +68,61 @@ fi
 # atuin last: it rebinds Up and Ctrl-R
 [[ -f "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
 command -v atuin >/dev/null && eval "$(atuin init zsh)"
+
+# ─── Dotfiles auto-update ────────────────────────────────────────────────────
+# Fast-forward this repo in the background, at most once every 12h. Never
+# blocks the prompt and never prints; see the log for what happened.
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+DOTFILES_UPDATE_INTERVAL=${DOTFILES_UPDATE_INTERVAL:-43200}
+
+_dotfiles_update() {
+  emulate -L zsh
+  zmodload zsh/datetime
+  zmodload -F zsh/stat b:zstat
+
+  local cache="${XDG_CACHE_HOME:-$HOME/.cache}/dotfiles"
+  local stamp="$cache/last-update" lock="$cache/update.lock" log="$cache/update.log"
+  mkdir -p "$cache"
+
+  # Throttle: bail if we checked recently
+  local -a mtime
+  if [[ -f "$stamp" ]]; then
+    zstat -A mtime +mtime "$stamp"
+    (( EPOCHSECONDS - mtime[1] < DOTFILES_UPDATE_INTERVAL )) && return
+  fi
+
+  # One updater at a time, even if several terminals open at once.
+  # Reclaim the lock if a previous run was killed before it could clean up.
+  if [[ -d "$lock" ]]; then
+    zstat -A mtime +mtime "$lock"
+    (( EPOCHSECONDS - mtime[1] > 3600 )) && rmdir "$lock" 2>/dev/null
+  fi
+  mkdir "$lock" 2>/dev/null || return
+  trap "rmdir ${(q)lock} 2>/dev/null" EXIT INT TERM HUP
+
+  # Touch first, so a failing remote doesn't retry on every new shell
+  touch "$stamp"
+
+  # Only touch a clean tree on a branch that tracks an upstream
+  git -C "$DOTFILES" diff --quiet --ignore-submodules HEAD 2>/dev/null || return
+  git -C "$DOTFILES" rev-parse --abbrev-ref '@{upstream}' >/dev/null 2>&1 || return
+
+  local before after
+  before=$(git -C "$DOTFILES" rev-parse HEAD)
+  {
+    print -r -- "── $(strftime '%F %T')"
+    GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND='ssh -oBatchMode=yes' \
+      git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=15 \
+          -C "$DOTFILES" pull --ff-only --quiet 2>&1
+  } >>"$log"
+  after=$(git -C "$DOTFILES" rev-parse HEAD)
+
+  # New commits may add files that aren't symlinked yet
+  if [[ "$before" != "$after" ]] && command -v stow >/dev/null; then
+    local -a pkgs=("$DOTFILES"/*(/N:t))
+    stow -d "$DOTFILES" -t "$HOME" -R $pkgs >>"$log" 2>&1
+    print -r -- "updated $before -> $after; restowed ${(j:, :)pkgs}" >>"$log"
+  fi
+}
+
+[[ -o interactive && -d "$DOTFILES/.git" ]] && { _dotfiles_update >/dev/null 2>&1 &! }
