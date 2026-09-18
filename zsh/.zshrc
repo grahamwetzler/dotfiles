@@ -166,4 +166,8 @@ dbt_worktree() {
 
 # Cortex CLI completion (disable via /settings in cortex)
 [[ -s ~/.zsh/completions/cortex.zsh ]] && source ~/.zsh/completions/cortex.zsh
-export NODE_EXTRA_CA_CERTS=/Users/Shared/.prompt_security/.certs/mitmproxy-ca.pem
+[[ -f /Users/Shared/.prompt_security/.certs/mitmproxy-ca.pem ]] && export NODE_EXTRA_CA_CERTS=/Users/Shared/.prompt_security/.certs/mitmproxy-ca.pem
+
+. "$HOME/.atuin/bin/env"
+
+eval "$(atuin init zsh)"
