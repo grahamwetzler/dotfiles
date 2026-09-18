@@ -17,10 +17,10 @@ fi
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
 [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-source "${ZINIT_HOME}/zinit.zsh"
+[[ -f "${ZINIT_HOME}/zinit.zsh" ]] && source "${ZINIT_HOME}/zinit.zsh"
 
 # oh-my-posh
-if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && command -v oh-my-posh >/dev/null 2>&1; then
   eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/omp.yaml)"
 fi
 
@@ -168,6 +168,8 @@ dbt_worktree() {
 [[ -s ~/.zsh/completions/cortex.zsh ]] && source ~/.zsh/completions/cortex.zsh
 [[ -f /Users/Shared/.prompt_security/.certs/mitmproxy-ca.pem ]] && export NODE_EXTRA_CA_CERTS=/Users/Shared/.prompt_security/.certs/mitmproxy-ca.pem
 
-. "$HOME/.atuin/bin/env"
+[[ -f "$HOME/.atuin/bin/env" ]] && . "$HOME/.atuin/bin/env"
 
-eval "$(atuin init zsh)"
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init zsh)"
+fi
