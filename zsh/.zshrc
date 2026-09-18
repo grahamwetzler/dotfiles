@@ -51,12 +51,11 @@ setopt hist_save_no_dups
 setopt hist_find_no_dups
 
 # ─── Aliases ─────────────────────────────────────────────────────────────────
-command -v bat >/dev/null && alias cat='bat'
+command -v bat >/dev/null && alias cat='bat -Sp'
 
 alias la='ls -lah'
 alias ll='ls -llh'
 alias hl='rg --passthru'                               # highlight matches
-alias lm='git show --pretty="format:" --name-only'     # files in last commit
 
 # ─── Tool integrations ───────────────────────────────────────────────────────
 if [[ "$TERM_PROGRAM" != "Apple_Terminal" ]] && command -v oh-my-posh >/dev/null; then
