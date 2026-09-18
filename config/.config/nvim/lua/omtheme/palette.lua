@@ -1,0 +1,18 @@
+return {
+  bg          = "#13141f",
+  bg_dark     = "#12131d",
+  bg_light    = "#181928",
+  bg_lighter  = "#282A36",
+  fg          = "#F8F8F2",
+  selection   = "#44475A",
+  comment     = "#6272A4",
+  cyan        = "#8BE9FD",
+  green       = "#50FA7B",
+  orange      = "#FFB86C",
+  pink        = "#FF79C6",
+  purple      = "#BD93F9",
+  red         = "#FF5555",
+  yellow      = "#F1FA8C",
+  white       = "#FFFFFF",
+  none        = "NONE",
+}
