@@ -112,7 +112,7 @@ then
   eval "$(direnv hook zsh)"
 fi
 
-. "$HOME/.cargo/env"
+test -e "${HOME}/.cargo/env" && source "${HOME}/.cargo/env"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
