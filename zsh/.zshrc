@@ -1,10 +1,3 @@
-# OPENSPEC:START
-# OpenSpec shell completions configuration
-fpath=("/Users/graham/.zsh/completions" $fpath)
-autoload -Uz compinit
-compinit
-# OPENSPEC:END
-
 if [[ -f "/opt/homebrew/bin/brew" ]] then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
@@ -26,7 +19,7 @@ fi
 
 
 # Load completions
-fpath+=~/.zsh/completions
+[[ -d ~/.zsh/completions ]] && fpath+=~/.zsh/completions
 autoload -Uz compinit && compinit
 
 # History
@@ -91,11 +84,6 @@ export PATH="$PATH:/Users/graham/.local/bin"
 export BAT_THEME=Dracula
 
 # shell integrations
-if typeset -f pyenv > /dev/null; then
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-fi
-
 if type fzf > /dev/null; then
   eval "$(fzf --zsh)"
 fi
