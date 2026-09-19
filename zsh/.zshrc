@@ -3,6 +3,13 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+# Explicit path for `brew bundle --global`: ~/.homebrew is Claude Code's trust
+# store, and its mere existence silently redirects brew's default global
+# Brewfile lookup to ~/.homebrew/Brewfile instead of ~/.Brewfile.
+export HOMEBREW_BUNDLE_FILE_GLOBAL="$HOME/.Brewfile"
+# VS Code extensions are managed by VS Code itself (sync), not tracked here.
+export HOMEBREW_BUNDLE_DUMP_NO_VSCODE=1
+
 # ─── Environment ─────────────────────────────────────────────────────────────
 # Secrets and machine-local exports (untracked)
 [[ -f "$HOME/.env" ]] && source "$HOME/.env"
