@@ -11,27 +11,27 @@
       {
         "id": "8328c692-1067-4dec-8a54-ce1d807bf3fb",
         "type": "thinking-effort",
-        "rawValue": true,
-        "color": "cyan"
+        "color": "brightBlack",
+        "rawValue": true
       },
       {
         "id": "35e36b8f-5404-4d5b-98f2-f0dc9aff2278",
         "type": "context-bar",
+        "color": "brightGreen",
+        "bold": true,
         "numberFormat": {
           "style": "compact"
         },
         "metadata": {
           "display": "slider"
-        },
-        "color": "brightGreen",
-        "bold": true
+        }
       }
     ],
     [
       {
         "id": "69c07856-8d41-4e17-aae6-865870f9ed30",
         "type": "session-usage",
-        "color": "brightBlue",
+        "color": "brightCyan",
         "bold": true
       },
       {
@@ -58,11 +58,11 @@
       {
         "id": "b30afed3-a78a-40a5-98e1-6e7ddcaee413",
         "type": "current-working-dir",
+        "color": "cyan",
+        "rawValue": true,
         "metadata": {
           "abbreviateHome": "true"
-        },
-        "rawValue": true,
-        "color": "cyan"
+        }
       },
       {
         "id": "8d54f1cd-37ca-4a2b-88cb-898fe4aeedd1",
@@ -73,7 +73,7 @@
   ],
   "flexMode": "full-minus-40",
   "compactThreshold": 60,
-  "colorLevel": 2,
+  "colorLevel": 3,
   "defaultSeparator": "·",
   "defaultPadding": " ",
   "defaultPaddingSide": "both",
