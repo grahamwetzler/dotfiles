@@ -3,7 +3,8 @@ cursor-style = block
 cursor-style-blink = false
 copy-on-select = clipboard
 shell-integration-features = no-cursor
-font-family = JetBrainsMapleMono-Regular.ttf
+font-family = "DMMono Nerd Font"
+font-style = Medium
 font-size = 13
 
 theme = Catppuccin Mocha
