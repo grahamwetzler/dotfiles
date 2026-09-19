@@ -378,6 +378,7 @@ enter_accept = true
 ##
 ## Default:
 # columns = ["duration", "time", "command"]
+columns = ["time", "command"]
 ##
 ## Examples:
 ##
