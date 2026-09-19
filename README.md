@@ -6,7 +6,7 @@ Each top-level directory is a stow package; its contents mirror `$HOME`.
 ## Install
 
 ```sh
-git clone <repo-url> ~/dotfiles
+git clone https://github.com/grahamwetzler/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 stow */
 ```
