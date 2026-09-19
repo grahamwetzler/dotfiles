@@ -51,7 +51,7 @@ setopt hist_save_no_dups
 setopt hist_find_no_dups
 
 # ─── Aliases ─────────────────────────────────────────────────────────────────
-command -v bat >/dev/null && alias cat='bat -Sp'
+command -v bat >/dev/null && alias cat='bat -p'
 
 alias la='ls -lah'
 alias ll='ls -llh'
