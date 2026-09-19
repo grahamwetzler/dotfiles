@@ -12,6 +12,8 @@
 	gl = config --global -l
 	se = !git rev-list --all | xargs git grep -F
 	cm = commit -m
+  cma = commit -am
 	d = diff --name-only main...
+  p = push
 [core]
 	excludesFile = ~/.gitignore
