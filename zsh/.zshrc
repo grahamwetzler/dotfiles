@@ -63,6 +63,7 @@ command -v bat >/dev/null && alias cat='bat -p'
 alias la='ls -lah'
 alias ll='ls -llh'
 alias hl='rg --passthru'                               # highlight matches
+alias dbtf="$HOME/.local/bin/dbt"                      # dbt Fusion
 
 # ─── Tool integrations ───────────────────────────────────────────────────────
 if [[ "$TERM_PROGRAM" != "Apple_Terminal" ]] && command -v oh-my-posh >/dev/null; then
