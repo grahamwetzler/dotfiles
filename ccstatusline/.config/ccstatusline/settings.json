@@ -31,27 +31,53 @@
       {
         "id": "69c07856-8d41-4e17-aae6-865870f9ed30",
         "type": "session-usage",
-        "color": "brightCyan",
-        "bold": true
+        "color": "gradient:atlas",
+        "bold": true,
+        "rawValue": false,
+        "numberFormat": {
+          "style": "compact"
+        },
+        "merge": true,
+        "metadata": {
+          "display": "slider",
+          "cursor": "false"
+        }
       },
       {
         "id": "c498fe81-1d80-4967-9379-644a3375c5d0",
         "type": "reset-timer",
-        "color": "brightBlack"
-      }
-    ],
-    [
-      {
-        "id": "7a5768b1-e31a-4a7d-beed-efdad041c054",
-        "type": "weekly-usage",
-        "color": "",
-        "bold": false,
-        "dim": "parens"
+        "color": "brightBlack",
+        "metadata": {
+          "display": "time"
+        },
+        "rawValue": true
       },
       {
-        "id": "80b210e0-ba0d-4e24-8a2a-45c93620c986",
+        "id": "20b53ed4-9b38-490f-8d57-2038d29c871c",
+        "type": "weekly-usage",
+        "rawValue": false,
+        "numberFormat": {
+          "style": "compact"
+        },
+        "merge": true,
+        "metadata": {
+          "display": "time"
+        },
+        "color": "white",
+        "dim": true
+      },
+      {
+        "id": "e4107197-7b41-4f67-8789-0cf125fed1ed",
         "type": "weekly-reset-timer",
-        "color": "brightBlack"
+        "numberFormat": {
+          "style": "compact"
+        },
+        "metadata": {
+          "compact": "true"
+        },
+        "rawValue": true,
+        "color": "",
+        "dim": true
       }
     ],
     [
