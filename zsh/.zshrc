@@ -15,7 +15,7 @@ export HOMEBREW_BUNDLE_DUMP_NO_VSCODE=1
 [[ -f "$HOME/.env" ]] && source "$HOME/.env"
 
 typeset -U path PATH          # keep PATH entries unique
-path=("$HOME/.local/bin" $path)
+path=("$HOME/.local/bin" "$HOME/.hunk/bin" $path)
 
 export CLICOLOR=1
 export BAT_THEME=Dracula
