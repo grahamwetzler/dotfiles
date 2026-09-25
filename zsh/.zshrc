@@ -72,6 +72,13 @@ fi
 
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
+# Ctrl-T: fuzzy-pick a file below the cwd and insert it at the cursor
+if command -v fzf >/dev/null; then
+  export FZF_CTRL_T_COMMAND='fd --type f --hidden --exclude .git'
+  export FZF_CTRL_T_OPTS="--preview 'bat --color=always {}'"
+  source <(fzf --zsh)
+fi
+
 # atuin last: it rebinds Up and Ctrl-R
 [[ -f "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
 command -v atuin >/dev/null && eval "$(atuin init zsh)"
