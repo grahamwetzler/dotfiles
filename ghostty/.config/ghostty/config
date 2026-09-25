@@ -12,6 +12,9 @@ background-opacity = 0.97
 background-blur = 20
 background-opacity-cells = false
 
+unfocused-split-opacity = 0.85
+split-divider-color = #6272a4
+
 window-padding-x = 10
 window-padding-y = 10
 
