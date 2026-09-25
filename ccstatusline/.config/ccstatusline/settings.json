@@ -6,7 +6,8 @@
         "id": "1",
         "type": "model",
         "color": "brightYellow",
-        "rawValue": true
+        "rawValue": true,
+        "merge": true
       },
       {
         "id": "8328c692-1067-4dec-8a54-ce1d807bf3fb",
@@ -22,22 +23,22 @@
         "numberFormat": {
           "style": "compact"
         },
+        "rawValue": true,
         "metadata": {
           "display": "slider"
-        },
-        "rawValue": true
+        }
       }
     ],
     [
       {
         "id": "69c07856-8d41-4e17-aae6-865870f9ed30",
         "type": "session-usage",
-        "color": "gradient:instagram",
-        "bold": true,
+        "color": "gradient:morning",
+        "bold": false,
         "numberFormat": {
           "style": "compact"
         },
-        "rawValue": false,
+        "rawValue": true,
         "merge": true,
         "metadata": {
           "display": "slider",
@@ -47,45 +48,46 @@
       {
         "id": "c498fe81-1d80-4967-9379-644a3375c5d0",
         "type": "reset-timer",
-        "color": "brightBlack",
+        "color": "gradient:morning",
         "rawValue": true,
         "metadata": {
           "display": "time"
-        }
+        },
+        "bold": false
       },
       {
         "id": "20b53ed4-9b38-490f-8d57-2038d29c871c",
         "type": "weekly-usage",
-        "color": "white",
-        "dim": true,
+        "color": "brightBlack",
         "numberFormat": {
           "style": "compact"
         },
-        "rawValue": false,
+        "rawValue": true,
         "merge": true,
         "metadata": {
           "display": "slider"
-        }
+        },
+        "bold": false
       },
       {
         "id": "e4107197-7b41-4f67-8789-0cf125fed1ed",
         "type": "weekly-reset-timer",
-        "color": "",
-        "dim": true,
+        "color": "brightBlack",
         "numberFormat": {
           "style": "compact"
         },
         "rawValue": true,
         "metadata": {
           "compact": "true"
-        }
+        },
+        "bold": false
       }
     ],
     [
       {
         "id": "b30afed3-a78a-40a5-98e1-6e7ddcaee413",
         "type": "current-working-dir",
-        "color": "cyan",
+        "color": "brightGreen",
         "rawValue": true,
         "metadata": {
           "abbreviateHome": "true"
@@ -94,7 +96,8 @@
       {
         "id": "8d54f1cd-37ca-4a2b-88cb-898fe4aeedd1",
         "type": "git-branch",
-        "color": "brightGreen"
+        "color": "brightGreen",
+        "bold": true
       }
     ]
   ],
