@@ -1,4 +1,4 @@
-theme = "github-dark-default"
+theme = "omtheme"
 mode = "unified"
 line_numbers = true
 wrap_lines = true
@@ -7,3 +7,33 @@ menu_bar = true
 agent_notes = false
 copy_decorations = false
 cursor_line = "row"
+
+# OMTheme (see nvim/lua/omtheme/palette.lua, ghostty/themes/OMTheme):
+# Dracula syntax on darker surfaces.
+[themes.omtheme]
+label = "OMTheme"
+base = "dracula"
+background = "#13141f"
+panel = "#12131d"
+panelAlt = "#181928"
+border = "#282a36"
+accent = "#bd93f9"
+accentMuted = "#44475a"
+text = "#f8f8f2"
+muted = "#6272a4"
+contextBg = "#13141f"
+contextContentBg = "#13141f"
+lineNumberBg = "#13141f"
+lineNumberFg = "#6272a4"
+selectedHunk = "#181928"
+addedBg = "#1c362d"
+addedContentBg = "#245439"
+removedBg = "#361e27"
+removedContentBg = "#55262e"
+addedSignColor = "#50fa7b"
+removedSignColor = "#ff5555"
+fileNew = "#50fa7b"
+fileDeleted = "#ff5555"
+fileModified = "#ffb86c"
+fileRenamed = "#8be9fd"
+fileUntracked = "#6272a4"
