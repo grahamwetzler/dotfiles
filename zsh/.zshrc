@@ -85,7 +85,8 @@ command -v atuin >/dev/null && eval "$(atuin init zsh)"
 
 # ─── Dotfiles auto-update ────────────────────────────────────────────────────
 # Fast-forward this repo in the background, at most once every 12h. Never
-# blocks the prompt and never prints; see the log for what happened.
+# blocks the prompt; prints one line when it starts, and another if the pull
+# changed something or failed. Details go to the log.
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 DOTFILES_UPDATE_INTERVAL=${DOTFILES_UPDATE_INTERVAL:-43200}
 
@@ -105,6 +106,13 @@ _dotfiles_update() {
     (( EPOCHSECONDS - mtime[1] < DOTFILES_UPDATE_INTERVAL )) && return
   fi
 
+  # Touch first, so a failing remote or dirty tree doesn't retry on every new shell
+  touch "$stamp"
+
+  # Only touch a clean tree on a branch that tracks an upstream
+  git -C "$DOTFILES" diff --quiet --ignore-submodules HEAD 2>/dev/null || return
+  git -C "$DOTFILES" rev-parse --abbrev-ref '@{upstream}' >/dev/null 2>&1 || return
+
   # One updater at a time, even if several terminals open at once.
   # Reclaim the lock if a previous run was killed before it could clean up.
   if [[ -d "$lock" ]]; then
@@ -112,31 +120,34 @@ _dotfiles_update() {
     (( EPOCHSECONDS - mtime[1] > 3600 )) && rmdir "$lock" 2>/dev/null
   fi
   mkdir "$lock" 2>/dev/null || return
-  trap "rmdir ${(q)lock} 2>/dev/null" EXIT INT TERM HUP
 
-  # Touch first, so a failing remote doesn't retry on every new shell
-  touch "$stamp"
+  # Say so up front: while the pull holds git's locks, a git-aware prompt can stall
+  print -P "%F{8}dotfiles: pulling in the background… (log: ${log/#$HOME/~})%f"
 
-  # Only touch a clean tree on a branch that tracks an upstream
-  git -C "$DOTFILES" diff --quiet --ignore-submodules HEAD 2>/dev/null || return
-  git -C "$DOTFILES" rev-parse --abbrev-ref '@{upstream}' >/dev/null 2>&1 || return
+  (
+    trap "rmdir ${(q)lock} 2>/dev/null" EXIT INT TERM HUP
 
-  local before after
-  before=$(git -C "$DOTFILES" rev-parse HEAD)
-  {
-    print -r -- "── $(strftime '%F %T')"
-    GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND='ssh -oBatchMode=yes' \
-      git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=15 \
-          -C "$DOTFILES" pull --ff-only --quiet 2>&1
-  } >>"$log"
-  after=$(git -C "$DOTFILES" rev-parse HEAD)
+    local before after
+    before=$(git -C "$DOTFILES" rev-parse HEAD)
+    print -r -- "── $(strftime '%F %T')" >>"$log"
+    if ! GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND='ssh -oBatchMode=yes' \
+        git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=15 \
+            -C "$DOTFILES" pull --ff-only --quiet >>"$log" 2>&1; then
+      print -P "\n%F{red}dotfiles: pull failed, see ${log/#$HOME/~}%f" >/dev/tty
+      exit
+    fi
+    after=$(git -C "$DOTFILES" rev-parse HEAD)
 
-  # New commits may add files that aren't symlinked yet
-  if [[ "$before" != "$after" ]] && command -v stow >/dev/null; then
-    local -a pkgs=("$DOTFILES"/*(/N:t))
-    stow -d "$DOTFILES" -t "$HOME" -R $pkgs >>"$log" 2>&1
-    print -r -- "updated $before -> $after; restowed ${(j:, :)pkgs}" >>"$log"
-  fi
+    # New commits may add files that aren't symlinked yet
+    if [[ "$before" != "$after" ]]; then
+      if command -v stow >/dev/null; then
+        local -a pkgs=("$DOTFILES"/*(/N:t))
+        stow -d "$DOTFILES" -t "$HOME" -R $pkgs >>"$log" 2>&1
+        print -r -- "updated $before -> $after; restowed ${(j:, :)pkgs}" >>"$log"
+      fi
+      print -P "\n%F{green}dotfiles: updated ${before:0:7}..${after:0:7}, open a new shell to load%f" >/dev/tty
+    fi
+  ) >/dev/null 2>&1 &!
 }
 
-[[ -o interactive && -d "$DOTFILES/.git" ]] && { _dotfiles_update >/dev/null 2>&1 &! }
+[[ -o interactive && -d "$DOTFILES/.git" ]] && _dotfiles_update
