@@ -1,0 +1,17 @@
+{
+  "name": "OMTheme",
+  "base": "dark",
+  "overrides": {
+    "userMessageBackground": "#262837",
+    "userMessageBackgroundHover": "#323446",
+    "composerSidebarBackground": "#1a1b28",
+    "bashMessageBackgroundColor": "#2a2536",
+    "memoryBackgroundColor": "#1f2333",
+    "selectionBg": "#44475a",
+    "subtle": "#44475a",
+    "inactive": "#6272a4",
+    "promptBorder": "#44475a",
+    "promptBorderShimmer": "#6272a4",
+    "rate_limit_empty": "#2e3044"
+  }
+}
