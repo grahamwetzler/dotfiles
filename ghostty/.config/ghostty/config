@@ -2,7 +2,7 @@ macos-icon = glass
 cursor-style = block
 cursor-style-blink = false
 copy-on-select = clipboard
-shell-integration-features = no-cursor
+shell-integration-features = no-cursor,ssh-env,ssh-terminfo,sudo
 font-family = "DMMono Nerd Font"
 font-style = Medium
 font-size = 13
@@ -17,3 +17,6 @@ window-padding-y = 10
 
 macos-titlebar-style = transparent
 window-save-state = always
+
+keybind = global:cmd+grave_accent=toggle_quick_terminal
+quick-terminal-size = 238px,921px
