@@ -19,6 +19,7 @@ window-padding-x = 10
 window-padding-y = 10
 
 macos-titlebar-style = transparent
+macos-option-as-alt = left
 window-save-state = always
 
 keybind = global:cmd+grave_accent=toggle_quick_terminal
