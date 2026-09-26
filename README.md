@@ -1,37 +1,33 @@
 # dotfiles
 
-Personal dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/).
-Each top-level directory is a stow package; its contents mirror `$HOME`.
+My personal macOS dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Each top-level directory is a stow package whose contents mirror `$HOME`.
 
-## Install
+## What's here
 
-```sh
-git clone https://github.com/grahamwetzler/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-stow */
-```
+| Package       | What it configures                                                      |
+| ------------- | ----------------------------------------------------------------------- |
+| `atuin`       | [Atuin](https://atuin.sh) shell history                                 |
+| `ccstatusline` | [ccstatusline](https://github.com/sirmalloc/ccstatusline) for Claude Code |
+| `claude`      | [Claude Code](https://claude.com/claude-code) theme (OMTheme)           |
+| `direnv`      | [direnv](https://direnv.net)                                            |
+| `ghostty`     | [Ghostty](https://ghostty.org) terminal, plus the OMTheme color scheme  |
+| `git`         | Git config and global ignore                                            |
+| `herdr`       | herdr                                                                   |
+| `homebrew`    | `~/.Brewfile` of formulae, casks, and taps                              |
+| `hunk`        | hunk                                                                    |
+| `nvim`        | Neovim config (lazy.nvim) and a custom OMTheme colorscheme              |
+| `oh-my-posh`  | [Oh My Posh](https://ohmyposh.dev) prompt                               |
+| `zsh`         | `.zshrc`                                                                |
 
-Re-run `stow -R */` after editing any package to relink.
+OMTheme is my own color scheme, shared across Ghostty, Neovim, and Claude Code.
 
-## Homebrew packages
+## How it's wired up
 
-`homebrew/.Brewfile` (stowed to `~/.Brewfile`) tracks installed formulae,
-casks, and taps via [`brew
-bundle`](https://docs.brew.sh/Brew-Bundle-and-Brewfile). VS Code extensions
-are excluded (synced by VS Code itself). `zsh/.zshrc` sets
-`HOMEBREW_BUNDLE_FILE_GLOBAL` and `HOMEBREW_BUNDLE_DUMP_NO_VSCODE` — the
-former so `--global` commands find the right file (`~/.homebrew`, Claude
-Code's trust store, exists on this machine and would otherwise redirect
-brew's default lookup there), the latter so a re-dump doesn't pull extensions
-back in.
-
-```sh
-brew bundle install --global   # install everything listed
-brew bundle check --global     # see what's missing, without installing
-brew bundle dump --global --force   # refresh the file from what's installed
-```
-
-## Auto-update
-
-`zsh/.zshrc` pulls this repo in the background on shell startup (at most every
-12h, only if the working tree is clean) and re-stows automatically.
+- **Homebrew:** the Brewfile is maintained with `brew bundle dump --global`.
+  `.zshrc` sets `HOMEBREW_BUNDLE_FILE_GLOBAL` so `--global` resolves to
+  `~/.Brewfile` (otherwise `~/.homebrew`, Claude Code's trust store, would
+  redirect the lookup).
+- **Auto-update:** on shell startup, `.zshrc` pulls this repo in the background
+  (at most every 12h, only when the working tree is clean) and re-stows every
+  package.
