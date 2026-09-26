@@ -3,6 +3,7 @@
 [user]
 	name = Graham Wetzler
 	email = graham@wetzler.dev
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIWOLAGP8OujXmWRizvOZe8qyYp6qxKAUDWtnw5Y6zbe
 [alias]
 	s = status -sb
 	sw = switch
@@ -17,3 +18,11 @@
   p = push
 [core]
 	excludesFile = ~/.gitignore
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
