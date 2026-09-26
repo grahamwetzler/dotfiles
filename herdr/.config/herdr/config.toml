@@ -9,3 +9,25 @@ delivery = "herdr"
 [theme]
 name = "catppuccin"
 auto_switch = false
+
+# OMTheme (matches ghostty/nvim/claude omtheme palette)
+[theme.custom]
+accent = "#bd93f9"
+panel_bg = "reset"  # inherit Ghostty's #13141f background + opacity
+sidebar_bg = "#12131d"
+active_row_bg = "#282a36"
+selection_bg = "#44475a"
+surface0 = "#21222c"
+surface1 = "#44475a"
+surface_dim = "#181928"
+overlay0 = "#6272a4"
+overlay1 = "#7f8ab8"
+text = "#f8f8f2"
+subtext0 = "#bfc3d9"
+mauve = "#bd93f9"
+green = "#50fa7b"
+yellow = "#f1fa8c"
+red = "#ff5555"
+blue = "#bd93f9"
+teal = "#8be9fd"
+peach = "#ffb86c"
