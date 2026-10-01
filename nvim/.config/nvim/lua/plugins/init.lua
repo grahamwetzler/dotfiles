@@ -40,6 +40,9 @@ return {
         window = {
           mappings = {
             ["E"] = "close_all_nodes",
+            ["s"] = function() require("flash").jump() end,
+            ["v"] = "open_vsplit",
+            ["-"] = "open_split",
           },
         },
         filesystem = {
