@@ -56,13 +56,13 @@ return {
     end,
   },
 
-  -- Treesitter (v1 rewrite: configs module removed, highlight is built-in to nvim 0.9+)
+  -- Treesitter (main branch: setup() only takes install_dir; parsers via install())
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter").setup({
-        ensure_installed = { "lua", "vim", "vimdoc", "python", "javascript", "typescript" },
+      require("nvim-treesitter").install({
+        "python", "javascript", "typescript", "sql", "yaml", "json", "markdown",
       })
       vim.api.nvim_create_autocmd("FileType", {
         callback = function() pcall(vim.treesitter.start) end,
@@ -74,8 +74,8 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
+      "mason-org/mason.nvim",
+      "mason-org/mason-lspconfig.nvim",
     },
     config = function()
       vim.api.nvim_create_autocmd("LspAttach", {
@@ -84,37 +84,21 @@ return {
           map("gd", vim.lsp.buf.definition)
           map("gr", function()
             for _, client in pairs(vim.lsp.get_clients({ bufnr = ev.buf })) do
-              if client.supports_method("textDocument/references") then
+              if client:supports_method("textDocument/references") then
                 return vim.lsp.buf.references()
               end
             end
             vim.notify("No LSP server supports references for this buffer", vim.log.levels.WARN)
           end)
-          map("K",  vim.lsp.buf.hover)
           map("<leader>rn", vim.lsp.buf.rename)
           map("<leader>ca", vim.lsp.buf.code_action)
         end,
       })
       require("mason").setup()
+      -- mason-lspconfig v2 calls vim.lsp.enable() for installed servers
       require("mason-lspconfig").setup({
         ensure_installed = { "lua_ls", "pyright", "ts_ls" },
-        handlers = {
-          function(server_name)
-            require("lspconfig")[server_name].setup({})
-          end,
-        },
       })
-      local configs = require("lspconfig.configs")
-      if not configs.dbt_ls then
-        configs.dbt_ls = {
-          default_config = {
-            cmd = { "dbt-language-server" },
-            filetypes = { "sql", "yaml" },
-            root_dir = require("lspconfig").util.root_pattern("dbt_project.yml"),
-          },
-        }
-      end
-      require("lspconfig").dbt_ls.setup({})
     end,
   },
 
@@ -178,26 +162,17 @@ return {
     opts = {},
   },
 
-  -- Comment
-  {
-    "numToStr/Comment.nvim",
-    opts = {},
-  },
-
   -- Which-key
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
-    opts = {},
-    config = function()
-      local wk = require("which-key")
-      wk.setup()
-      wk.add({
+    opts = {
+      spec = {
         { "<leader>a", group = "AI/Claude Code" },
         { "<leader>f", group = "find" },
         { "<leader>g", group = "git" },
-      })
-    end,
+      },
+    },
   },
 
   -- Word highlight under cursor (VS Code-style)
@@ -225,7 +200,6 @@ return {
   -- Flash (enhanced motions)
   {
     "folke/flash.nvim",
-    event = "VeryLazy",
     opts = {},
     keys = {
       { "s",     function() require("flash").jump() end,              mode = { "n", "x", "o" }, desc = "Flash" },
@@ -261,6 +235,7 @@ return {
         javascript = { "prettierd", "prettier", stop_after_first = true },
         typescript = { "prettierd", "prettier", stop_after_first = true },
         sql = { "sqlfmt" },
+        json = { "jq" },
       },
       format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
     },
@@ -281,7 +256,7 @@ return {
 
   -- Better text objects + surround (mini.ai, mini.surround)
   {
-    "echasnovski/mini.nvim",
+    "nvim-mini/mini.nvim",
     version = false,
     config = function()
       require("mini.ai").setup({ n_lines = 500 })
@@ -294,24 +269,8 @@ return {
     "coder/claudecode.nvim",
     dependencies = { "folke/snacks.nvim" },
     config = true,
-    cmd = {
-      "ClaudeCode",
-      "ClaudeCodeFocus",
-      "ClaudeCodeSelectModel",
-      "ClaudeCodeAdd",
-      "ClaudeCodeSend",
-      "ClaudeCodeTreeAdd",
-      "ClaudeCodeStatus",
-      "ClaudeCodeStart",
-      "ClaudeCodeStop",
-      "ClaudeCodeOpen",
-      "ClaudeCodeClose",
-      "ClaudeCodeDiffAccept",
-      "ClaudeCodeDiffDeny",
-      "ClaudeCodeCloseAllDiffs",
-    },
+    cmd = { "ClaudeCode", "ClaudeCodeStatus", "ClaudeCodeCloseAllDiffs" },
     keys = {
-      { "<leader>a", nil, desc = "AI/Claude Code" },
       { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
       { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
       { "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
@@ -323,31 +282,5 @@ return {
       { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
       { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
     },
-  },
-
-  -- dbt
-  {
-    "PedramNavid/dbtpal",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
-    ft = { "sql", "yaml" },
-    keys = {
-      { "<leader>drf", "<cmd>DbtRun<cr>", desc = "dbt run file" },
-      { "<leader>drp", "<cmd>DbtRunAll<cr>", desc = "dbt run project" },
-      { "<leader>dtf", "<cmd>DbtTest<cr>", desc = "dbt test file" },
-      { "<leader>dm",  "<cmd>lua require('dbtpal.telescope').dbt_picker()<cr>", desc = "dbt models" },
-    },
-    config = function()
-      require("dbtpal").setup({
-        path_to_dbt = vim.fn.trim(vim.fn.system("poetry run which dbt")),
-        path_to_dbt_project = ".",
-        path_to_dbt_profiles_dir = vim.fn.expand("~/.dbt"),
-        extended_path_search = true,
-        protect_compiled_files = true,
-      })
-      require("telescope").load_extension("dbtpal")
-    end,
   },
 }

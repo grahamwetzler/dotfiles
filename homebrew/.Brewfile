@@ -33,6 +33,8 @@ brew "lazygit"
 brew "mole"
 # Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
+# Parser generator CLI (compiles nvim-treesitter parsers)
+brew "tree-sitter-cli"
 # Open-source, cross-platform JavaScript runtime environment
 brew "node"
 # Prompt theme engine for any shell
