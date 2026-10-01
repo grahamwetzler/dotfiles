@@ -170,6 +170,7 @@ return {
       spec = {
         { "<leader>f", group = "find" },
         { "<leader>g", group = "git" },
+        { "gs", group = "surround" },
       },
     },
   },
@@ -250,7 +251,18 @@ return {
     version = false,
     config = function()
       require("mini.ai").setup({ n_lines = 500 })
-      require("mini.surround").setup()
+      -- gs prefix so surround keys don't delay flash's `s`
+      require("mini.surround").setup({
+        mappings = {
+          add = "gsa",
+          delete = "gsd",
+          find = "gsf",
+          find_left = "gsF",
+          highlight = "gsh",
+          replace = "gsr",
+          update_n_lines = "gsn",
+        },
+      })
     end,
   },
 }
