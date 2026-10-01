@@ -37,6 +37,11 @@ return {
     },
     config = function()
       require("neo-tree").setup({
+        window = {
+          mappings = {
+            ["E"] = "close_all_nodes",
+          },
+        },
         filesystem = {
           bind_to_cwd = false,
           follow_current_file = { enabled = true },
