@@ -27,3 +27,5 @@
 	gpgsign = true
 [tag]
 	gpgsign = true
+[rebase]
+	autoStash = true
