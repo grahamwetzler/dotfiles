@@ -16,6 +16,7 @@ export HOMEBREW_BUNDLE_DUMP_NO_VSCODE=1
 
 typeset -U path PATH          # keep PATH entries unique
 path=("$HOME/.local/bin" "$HOME/.hunk/bin" $path)
+export HUNK_NO_MODIFY_PATH=1   # stop Hunk installer/updates appending to .zshrc
 
 export CLICOLOR=1
 export BAT_THEME=Dracula
