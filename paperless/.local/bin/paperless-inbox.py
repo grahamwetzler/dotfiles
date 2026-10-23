@@ -61,8 +61,12 @@ def is_settled(path: Path) -> bool:
         return False
     if time.time() - path.stat().st_mtime < SETTLE_SECONDS:
         return False
-    # A writer can stall past SETTLE_SECONDS, but it still has the file open
-    return subprocess.run(["/usr/sbin/lsof", "-t", str(path)], capture_output=True).returncode != 0
+    # A writer can stall past SETTLE_SECONDS, but it still has the file open for
+    # writing ("w" or "u" access); readers like Quick Look shouldn't block uploads
+    access = subprocess.run(
+        ["/usr/sbin/lsof", "-w", "-F", "a", "--", str(path)], capture_output=True, text=True,
+    ).stdout.splitlines()
+    return not {"aw", "au"} & set(access)
 
 
 def upload(client: httpx.Client, path: Path) -> str:

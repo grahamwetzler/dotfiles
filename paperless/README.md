@@ -40,14 +40,15 @@ empty, so every file has to leave:
   error or timeout), or it was hidden or a directory. Hidden files are never
   uploaded; `.DS_Store` is just deleted.
 - **Left in place, retried:** it was modified in the last 10 seconds, another app
-  still has it open, it looks like a partial download, or Paperless was
-  unreachable. Retries are at most every 30 seconds.
+  still has it open for writing, it looks like a partial download, or Paperless
+  was unreachable. Retries are at most every 30 seconds.
 
 Once Paperless has acknowledged an upload, the file leaves the inbox even if
-confirming it fails, so it isn't uploaded again. If the upload's response is lost
-(a timeout, say), the file stays and is retried; Paperless then rejects the retry
-as a duplicate, and the file lands in `~/Inbox Failed` with the existing
-document's ID in the log.
+confirming it fails, so it isn't uploaded again. If the upload fails without an
+acknowledgement (a timeout, say), the file stays and is retried. Whether Paperless
+received the first attempt is unknown: if it didn't, the retry goes through
+normally; if it did, the retry is rejected as a duplicate and the file lands in
+`~/Inbox Failed`, with the existing document's ID in the log.
 
 The log is `~/Library/Logs/paperless-inbox.log`.
 
