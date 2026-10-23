@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>net.wetzler.paperless-inbox</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/uv</string>
+        <string>run</string>
+        <string>--quiet</string>
+        <string>--script</string>
+        <string>/Users/graham/.local/bin/paperless-inbox.py</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <!-- Runs whenever the inbox is non-empty, and again until the script empties it -->
+    <key>QueueDirectories</key>
+    <array>
+        <string>/Users/graham/Inbox</string>
+    </array>
+    <!-- Minimum seconds between runs, which paces retries while Paperless is unreachable -->
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/graham/Library/Logs/paperless-inbox.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/graham/Library/Logs/paperless-inbox.log</string>
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>

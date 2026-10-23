@@ -18,6 +18,7 @@ Each top-level directory is a stow package whose contents mirror `$HOME`.
 | `hunk`        | hunk                                                                    |
 | `nvim`        | Neovim config (lazy.nvim) and a custom OMTheme colorscheme              |
 | `oh-my-posh`  | [Oh My Posh](https://ohmyposh.dev) prompt                               |
+| `paperless`   | LaunchAgent that uploads `~/Inbox` to Paperless, then trashes the files |
 | `zsh`         | `.zshrc`                                                                |
 
 OMTheme is my own color scheme, shared across Ghostty, Neovim, and Claude Code.
