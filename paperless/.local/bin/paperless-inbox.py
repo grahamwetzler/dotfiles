@@ -56,17 +56,35 @@ def setting(env_var: str, account: str) -> str:
     return result.stdout.strip()
 
 
+def open_for_writing(path: Path) -> bool:
+    # "w" or "u" access; readers like Quick Look shouldn't block uploads
+    access = subprocess.run(
+        ["/usr/sbin/lsof", "-w", "-F", "a", "--", str(path)], capture_output=True, text=True,
+    ).stdout.splitlines()
+    return bool({"aw", "au"} & set(access))
+
+
 def is_settled(path: Path) -> bool:
     if path.suffix.lower() in PARTIAL_SUFFIXES:
         return False
     if time.time() - path.stat().st_mtime < SETTLE_SECONDS:
         return False
-    # A writer can stall past SETTLE_SECONDS, but it still has the file open for
-    # writing ("w" or "u" access); readers like Quick Look shouldn't block uploads
-    access = subprocess.run(
-        ["/usr/sbin/lsof", "-w", "-F", "a", "--", str(path)], capture_output=True, text=True,
-    ).stdout.splitlines()
-    return not {"aw", "au"} & set(access)
+    # A writer can stall past SETTLE_SECONDS, but it still has the file open
+    return not open_for_writing(path)
+
+
+def is_hidden(path: Path, root: Path) -> bool:
+    return any(part.startswith(".") for part in path.relative_to(root).parts)
+
+
+def busy(entry: Path) -> Path | None:
+    """Return something under entry that's still changing, if anything is."""
+    for p in [entry, *entry.rglob("*")]:
+        # Hidden files only count while open, so a stale .DS_Store or an abandoned
+        # .part file can't hold a folder back forever
+        if open_for_writing(p) if is_hidden(p, entry) else not is_settled(p):
+            return p
+    return None
 
 
 def upload(client: httpx.Client, path: Path) -> str:
@@ -110,21 +128,26 @@ class Unreachable(Exception):
 
 
 def move_to_failed(path: Path) -> None:
-    # Keep the file's folder path so a rejected file from a dropped folder stays recognizable
-    dest = FAILED_DIR / path.relative_to(INBOX)
-    dest.parent.mkdir(parents=True, exist_ok=True)
+    # Keep the file's folder path so a rejected file from a dropped folder stays
+    # recognizable, renaming any folder whose name is already taken by a file
+    stamp = f"{datetime.now():%Y%m%d-%H%M%S}"
+    rel = path.relative_to(INBOX)
+    dest = FAILED_DIR
+    for part in rel.parts[:-1]:
+        dest /= part
+        if dest.exists() and not dest.is_dir():
+            dest = dest.with_name(f"{dest.name} {stamp}")
+    dest.mkdir(parents=True, exist_ok=True)
+    dest /= rel.name
     if dest.exists():
-        dest = dest.with_stem(f"{dest.stem} {datetime.now():%Y%m%d-%H%M%S}")
+        dest = dest.with_stem(f"{dest.stem} {stamp}")
     shutil.move(path, dest)
     log(f"moved to {dest}")
 
 
 def documents_in(folder: Path) -> list[Path]:
     """Every file under folder, ignoring hidden files and anything in hidden folders."""
-    return sorted(
-        p for p in folder.rglob("*")
-        if p.is_file() and not any(part.startswith(".") for part in p.relative_to(folder).parts)
-    )
+    return sorted(p for p in folder.rglob("*") if p.is_file() and not is_hidden(p, folder))
 
 
 def process(client: httpx.Client, path: Path) -> bool:
@@ -186,20 +209,30 @@ def main() -> int:
 
             # A dropped folder is handled as a whole, and only once nothing in it
             # (including the folder itself, while files are still arriving) is changing
-            if unsettled := [p for p in [entry, *entry.rglob("*")] if not is_settled(p)]:
-                log(f"{unsettled[0].relative_to(INBOX)}: still being written, will retry")
+            if changing := busy(entry):
+                log(f"{changing.relative_to(INBOX)}: still being written, will retry")
                 continue
 
             try:
                 for path in [entry] if entry.is_file() else documents_in(entry):
+                    # Uploading a folder takes a while, so recheck each file in case
+                    # it arrived or changed since the folder was checked
+                    if path != entry and not is_settled(path):
+                        log(f"{path.relative_to(INBOX)}: still being written, will retry")
+                        continue
                     if not process(client, path):
                         status = 1
             except Unreachable as e:
                 log(f"{e}; will retry")
                 return 1
 
-            # Trash the folder once every document in it has been uploaded or moved aside
-            if entry.is_dir() and not documents_in(entry):
+            # Trash the folder once every document in it has been uploaded or moved
+            # aside, unless something (say, a copy's hidden temp file) is still being written
+            if (
+                entry.is_dir()
+                and not documents_in(entry)
+                and not any(open_for_writing(p) for p in entry.rglob("*"))
+            ):
                 subprocess.run(["/usr/bin/trash", str(entry)], check=True)
                 log(f"{entry.name}: folder emptied, moved to the Trash")
 
