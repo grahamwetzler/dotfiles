@@ -37,11 +37,16 @@ empty, so every file has to leave:
 
 - **Trash:** Paperless's task API confirmed it was consumed.
 - **`~/Inbox Failed`:** Paperless rejected it (unsupported, a duplicate, consume
-  error or timeout), or it was hidden or a directory. Hidden files are never
-  uploaded; `.DS_Store` is just deleted.
+  error or timeout), or it was hidden. Hidden files are never uploaded;
+  `.DS_Store` is just deleted.
 - **Left in place, retried:** it was modified in the last 10 seconds, another app
   still has it open for writing, it looks like a partial download, or Paperless
   was unreachable. Retries are at most every 30 seconds.
+
+A dropped folder is handled once nothing in it has changed for 10 seconds. Every
+file inside it, including in subfolders, is handled as above, except that hidden
+files are ignored. Rejected files keep their folder path under `~/Inbox Failed`.
+Once no files are left, the folder goes to the Trash.
 
 Once Paperless has acknowledged an upload, the file leaves the inbox even if
 confirming it fails, so it isn't uploaded again. If the upload fails without an

@@ -105,13 +105,55 @@ def wait_for_task(client: httpx.Client, task_id: str) -> int:
     raise Rejected(f"task {task_id} still unfinished after {TASK_TIMEOUT_SECONDS}s; check Paperless")
 
 
+class Unreachable(Exception):
+    """Paperless is down or refused the token; give up on this run."""
+
+
 def move_to_failed(path: Path) -> None:
-    FAILED_DIR.mkdir(parents=True, exist_ok=True)
-    dest = FAILED_DIR / path.name
+    # Keep the file's folder path so a rejected file from a dropped folder stays recognizable
+    dest = FAILED_DIR / path.relative_to(INBOX)
+    dest.parent.mkdir(parents=True, exist_ok=True)
     if dest.exists():
         dest = dest.with_stem(f"{dest.stem} {datetime.now():%Y%m%d-%H%M%S}")
     shutil.move(path, dest)
     log(f"moved to {dest}")
+
+
+def documents_in(folder: Path) -> list[Path]:
+    """Every file under folder, ignoring hidden files and anything in hidden folders."""
+    return sorted(
+        p for p in folder.rglob("*")
+        if p.is_file() and not any(part.startswith(".") for part in p.relative_to(folder).parts)
+    )
+
+
+def process(client: httpx.Client, path: Path) -> bool:
+    """Upload one file, then trash it or move it to FAILED_DIR. Return False to retry it later."""
+    name = path.relative_to(INBOX)
+    try:
+        task_id = upload(client, path)
+    except Rejected as e:
+        log(f"{name}: {e}")
+        move_to_failed(path)
+        return True
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code in (401, 403):
+            raise Unreachable(f"Paperless rejected the API token ({e.response.status_code})")
+        log(f"{name}: {e}; will retry")
+        return False
+    except httpx.TransportError as e:
+        raise Unreachable(f"cannot reach Paperless ({e!r})")
+
+    # Paperless has the file now, so whatever happens it must leave the inbox;
+    # otherwise launchd's next run would upload it again
+    try:
+        doc_id = wait_for_task(client, task_id)
+        log(f"{name}: uploaded as document {doc_id}")
+        subprocess.run(["/usr/bin/trash", str(path)], check=True)
+    except Exception as e:
+        log(f"{name}: uploaded as task {task_id} but not confirmed: {e}")
+        move_to_failed(path)
+    return True
 
 
 def main() -> int:
@@ -136,41 +178,30 @@ def main() -> int:
     status = 0
     headers = {"Authorization": f"Token {token}"}
     with httpx.Client(base_url=url, headers=headers, timeout=60) as client:
-        for path in entries:
-            if path.is_dir() or path.name.startswith("."):
-                log(f"{path.name}: hidden file or directory, not uploading")
-                move_to_failed(path)
+        for entry in entries:
+            if entry.name.startswith("."):
+                log(f"{entry.name}: hidden, not uploading")
+                move_to_failed(entry)
                 continue
-            if not is_settled(path):
-                log(f"{path.name}: still being written, will retry")
+
+            # A dropped folder is handled as a whole, and only once nothing in it
+            # (including the folder itself, while files are still arriving) is changing
+            if unsettled := [p for p in [entry, *entry.rglob("*")] if not is_settled(p)]:
+                log(f"{unsettled[0].relative_to(INBOX)}: still being written, will retry")
                 continue
 
             try:
-                task_id = upload(client, path)
-            except Rejected as e:
-                log(f"{path.name}: {e}")
-                move_to_failed(path)
-                continue
-            except httpx.HTTPStatusError as e:
-                if e.response.status_code in (401, 403):
-                    log(f"Paperless rejected the API token ({e.response.status_code}); stopping")
-                    return 1
-                log(f"{path.name}: {e}; will retry")
-                status = 1
-                continue
-            except httpx.TransportError as e:
-                log(f"{path.name}: cannot reach Paperless ({e!r}); will retry")
+                for path in [entry] if entry.is_file() else documents_in(entry):
+                    if not process(client, path):
+                        status = 1
+            except Unreachable as e:
+                log(f"{e}; will retry")
                 return 1
 
-            # Paperless has the file now, so whatever happens it must leave the inbox;
-            # otherwise launchd's next run would upload it again
-            try:
-                doc_id = wait_for_task(client, task_id)
-                log(f"{path.name}: uploaded as document {doc_id}")
-                subprocess.run(["/usr/bin/trash", str(path)], check=True)
-            except Exception as e:
-                log(f"{path.name}: uploaded as task {task_id} but not confirmed: {e}")
-                move_to_failed(path)
+            # Trash the folder once every document in it has been uploaded or moved aside
+            if entry.is_dir() and not documents_in(entry):
+                subprocess.run(["/usr/bin/trash", str(entry)], check=True)
+                log(f"{entry.name}: folder emptied, moved to the Trash")
 
     return status
 
