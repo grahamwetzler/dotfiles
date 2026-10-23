@@ -45,6 +45,8 @@ brew "ripgrep"
 brew "stow"
 # Easiest, most secure way to use WireGuard and 2FA
 brew "tailscale"
+# Extremely fast Python package installer and resolver, written in Rust
+brew "uv"
 # Why is this running?
 brew "witr"
 # Coding agent with the IDE wired in

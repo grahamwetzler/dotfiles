@@ -59,7 +59,10 @@ def setting(env_var: str, account: str) -> str:
 def is_settled(path: Path) -> bool:
     if path.suffix.lower() in PARTIAL_SUFFIXES:
         return False
-    return time.time() - path.stat().st_mtime >= SETTLE_SECONDS
+    if time.time() - path.stat().st_mtime < SETTLE_SECONDS:
+        return False
+    # A writer can stall past SETTLE_SECONDS, but it still has the file open
+    return subprocess.run(["/usr/sbin/lsof", "-t", str(path)], capture_output=True).returncode != 0
 
 
 def upload(client: httpx.Client, path: Path) -> str:

@@ -10,7 +10,8 @@ A LaunchAgent that uploads anything dropped in `~/Inbox` to
 
 ## Setup on a new Mac
 
-Stow links both files, but the job also needs its settings and loading:
+Stow links both files, and the Brewfile installs `uv`, but the job also needs its
+settings and loading:
 
 1. Store the Paperless URL and API token in the keychain (each prompts for its value):
 
@@ -38,12 +39,15 @@ empty, so every file has to leave:
 - **`~/Inbox Failed`:** Paperless rejected it (unsupported, a duplicate, consume
   error or timeout), or it was hidden or a directory. Hidden files are never
   uploaded; `.DS_Store` is just deleted.
-- **Left in place, retried:** it was modified in the last 10 seconds or looks like
-  a partial download, or Paperless was unreachable. Retries are at most every
-  30 seconds.
+- **Left in place, retried:** it was modified in the last 10 seconds, another app
+  still has it open, it looks like a partial download, or Paperless was
+  unreachable. Retries are at most every 30 seconds.
 
-Once a file has been uploaded it never stays in the inbox, even if confirming it
-fails, so it can't be uploaded twice.
+Once Paperless has acknowledged an upload, the file leaves the inbox even if
+confirming it fails, so it isn't uploaded again. If the upload's response is lost
+(a timeout, say), the file stays and is retried; Paperless then rejects the retry
+as a duplicate, and the file lands in `~/Inbox Failed` with the existing
+document's ID in the log.
 
 The log is `~/Library/Logs/paperless-inbox.log`.
 
@@ -57,4 +61,6 @@ The log is `~/Library/Logs/paperless-inbox.log`.
 - **The proxy in front of Paperless must let `/api/` through** with just the token.
 
 The keychain settings can be overridden with `PAPERLESS_URL` and `PAPERLESS_TOKEN`,
-and the folders with `PAPERLESS_INBOX` and `PAPERLESS_FAILED_DIR`.
+and the folders with `PAPERLESS_INBOX` and `PAPERLESS_FAILED_DIR`. If you change the
+inbox, also change `QueueDirectories` in the plist, since that's the folder launchd
+actually watches.
