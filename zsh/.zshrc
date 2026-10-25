@@ -18,6 +18,11 @@ typeset -U path PATH          # keep PATH entries unique
 path=("$HOME/.local/bin" "$HOME/.hunk/bin" $path)
 export HUNK_NO_MODIFY_PATH=1   # stop Hunk installer/updates appending to .zshrc
 
+# 1Password SSH agent
+_op_sock="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+[[ -S "$_op_sock" ]] && export SSH_AUTH_SOCK="$_op_sock"
+unset _op_sock
+
 export CLICOLOR=1
 export BAT_THEME=Dracula
 
