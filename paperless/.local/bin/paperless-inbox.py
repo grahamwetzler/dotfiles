@@ -64,13 +64,22 @@ def open_for_writing(path: Path) -> bool:
     return bool({"aw", "au"} & set(access))
 
 
-def is_settled(path: Path) -> bool:
-    if path.suffix.lower() in PARTIAL_SUFFIXES:
-        return False
-    if time.time() - path.stat().st_mtime < SETTLE_SECONDS:
+def is_quiet(path: Path) -> bool:
+    """Neither modified in the last SETTLE_SECONDS nor open for writing."""
+    try:
+        if time.time() - path.stat().st_mtime < SETTLE_SECONDS:
+            return False
+    except FileNotFoundError:
+        # Renamed or removed since it was listed, so something is still changing
         return False
     # A writer can stall past SETTLE_SECONDS, but it still has the file open
     return not open_for_writing(path)
+
+
+def is_settled(path: Path) -> bool:
+    if path.suffix.lower() in PARTIAL_SUFFIXES:
+        return False
+    return is_quiet(path)
 
 
 def is_hidden(path: Path, root: Path) -> bool:
@@ -80,9 +89,9 @@ def is_hidden(path: Path, root: Path) -> bool:
 def busy(entry: Path) -> Path | None:
     """Return something under entry that's still changing, if anything is."""
     for p in [entry, *entry.rglob("*")]:
-        # Hidden files only count while open, so a stale .DS_Store or an abandoned
-        # .part file can't hold a folder back forever
-        if open_for_writing(p) if is_hidden(p, entry) else not is_settled(p):
+        # Hidden files only count while recent or open, so a stale .DS_Store or an
+        # abandoned .part file can't hold a folder back forever
+        if not (is_quiet(p) if is_hidden(p, entry) else is_settled(p)):
             return p
     return None
 
@@ -227,11 +236,12 @@ def main() -> int:
                 return 1
 
             # Trash the folder once every document in it has been uploaded or moved
-            # aside, unless something (say, a copy's hidden temp file) is still being written
+            # aside, unless something (say, a copy's hidden temp file, which may be
+            # closed between writes or before its rename) is still being written
             if (
                 entry.is_dir()
                 and not documents_in(entry)
-                and not any(open_for_writing(p) for p in entry.rglob("*"))
+                and all(is_quiet(p) for p in entry.rglob("*"))
             ):
                 subprocess.run(["/usr/bin/trash", str(entry)], check=True)
                 log(f"{entry.name}: folder emptied, moved to the Trash")
