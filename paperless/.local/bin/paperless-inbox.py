@@ -67,8 +67,10 @@ def open_for_writing(path: Path) -> bool:
 def is_quiet(path: Path) -> bool:
     """Neither modified in the last SETTLE_SECONDS nor open for writing."""
     try:
-        # lstat, so a dangling symlink settles rather than looking vanished forever
-        if time.time() - path.lstat().st_mtime < SETTLE_SECONDS:
+        # A symlink's target is what gets uploaded, so go by its age; a dangling
+        # one has no target, so go by the link's own age rather than wait forever
+        st = path.stat() if path.exists() else path.lstat()
+        if time.time() - st.st_mtime < SETTLE_SECONDS:
             return False
     except FileNotFoundError:
         # Renamed or removed since it was listed, so something is still changing
