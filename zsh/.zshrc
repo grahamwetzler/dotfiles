@@ -157,3 +157,10 @@ _dotfiles_update() {
 }
 
 [[ -o interactive && -d "$DOTFILES/.git" ]] && _dotfiles_update
+
+# Cortex CLI completion (disable via /settings in cortex)
+[[ -s ~/.zsh/completions/cortex.zsh ]] && source ~/.zsh/completions/cortex.zsh
+# Added by dbt v2 extension (ensure dbt binary dir on PATH)
+if [[ ":$PATH:" != *":/Users/graham/.local/bin:"* ]]; then
+  export PATH=/Users/graham/.local/bin:"$PATH"
+fi
