@@ -6,6 +6,9 @@ status_indicators = "dots"
 [ui.toast]
 delivery = "herdr"
 
+[ui.sound]
+path = "sounds/ctpn-ongoing.mp3"
+
 [theme]
 name = "catppuccin-latte"
 auto_switch = false
