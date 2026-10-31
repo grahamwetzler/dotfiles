@@ -3,3 +3,5 @@
 *.bak
 .zcompdump
 hunk/.config/hunk/state.json
+# roborev snapshots
+/.roborev/
