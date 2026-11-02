@@ -1,0 +1,26 @@
+#!/bin/zsh
+# Apply Time Machine exclusions for caches and re-downloadable tools.
+#
+# tmutil stores each exclusion on the folder itself, so it is lost if the folder
+# is deleted and recreated. Re-run this script to restore them. Folders that
+# don't exist yet are skipped.
+
+paths=(
+  "$HOME/.cache"
+  "$HOME/.npm"
+  "$HOME/.local/share/claude/versions"
+  "$HOME/.local/share/uv/python"
+  "$HOME/Library/Application Support/Claude/claude-code"
+  "$HOME/Library/Application Support/discord/Cache"
+  "$HOME/Library/Application Support/Google/Chrome/Default/Service Worker/CacheStorage"
+  "$HOME/Library/Application Support/Google/Chrome/component_crx_cache"
+  "$HOME/Library/Application Support/Google/GoogleUpdater/crx_cache"
+)
+
+for p in $paths; do
+  if [[ -e $p ]]; then
+    tmutil addexclusion "$p" && tmutil isexcluded "$p"
+  else
+    print -r -- "[Skipped]   $p (not found)"
+  fi
+done
